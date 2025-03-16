@@ -7,10 +7,29 @@ export const TMDB_CONFIG = {
   },
 };
 
-export const fetchMovies = async ({ query }: { query: string }) => {
-  const endpoint = query
-    ? `${TMDB_CONFIG.BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-    : `${TMDB_CONFIG.BASE_URL}/discover/movie?sort_by=popularity.desc`;
+export const fetchMovies = async ({
+  query,
+  sort_by,
+}: {
+  query: string;
+  sort_by?: string;
+}) => {
+  let endpoint;
+  if (query) {
+    endpoint = `${TMDB_CONFIG.BASE_URL}/search/movie?query=${encodeURIComponent(
+      query
+    )}`;
+    // Add sort_by if provided with query
+    if (sort_by) {
+      endpoint += `&sort_by=${encodeURIComponent(sort_by)}`;
+    }
+  } else {
+    // Use discover endpoint with sort_by or default
+    endpoint = `${TMDB_CONFIG.BASE_URL}/discover/movie?sort_by=${
+      sort_by ? encodeURIComponent(sort_by) : "popularity.desc"
+    }`;
+  }
+  console.log(endpoint);
 
   const response = await fetch(endpoint, {
     method: "GET",
