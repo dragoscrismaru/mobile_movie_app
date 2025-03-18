@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   Text,
   View,
@@ -16,20 +17,34 @@ import { fetchMovies } from "@/services/api";
 import MovieCard from "@/components/MovieCard";
 import { getMostSearchedMovies } from "@/services/appwrite";
 import TrendingCard from "@/components/TrendingCard";
+import { useState } from "react";
 export default function Index() {
   const router = useRouter();
-
+  const [refreshing, setRefreshing] = useState(false); // Add refresh state
   const {
     data: trendingMovies,
     loading: trendingLoading,
     error: trendingError,
+    refetch: refetchTrending,
   } = useFetch(getMostSearchedMovies);
 
   const {
     data: movies,
     loading: moviesLoading,
     error: moviesError,
+    refetch: refetchMovies,
   } = useFetch(() => fetchMovies({ query: "" }));
+  // Add refresh handler
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([refetchTrending(), refetchMovies()]);
+    } catch (error) {
+      console.error("Refresh error:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-primary">
@@ -41,6 +56,9 @@ export default function Index() {
           minHeight: "100%",
           paddingBottom: 10,
         }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
       >
         <Image source={icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
         {moviesLoading || trendingLoading ? (
