@@ -73,22 +73,19 @@ export default function Index() {
           </Text>
         ) : (
           <View className="flex-1 mt-5">
-            {/* <SearchBar
-              onPress={() => router.push("/search")}
-              placeholder="Search for a movie"
-            /> */}
             {trendingMovies && (
               <View className="mt-10">
                 <Text className="text-lg text-white font-bold mb-3 mt-3">
-                  Trending movies
+                  Popular movies
                 </Text>
 
                 <FlatList
                   className="mb-4 mt-3"
+                  contentContainerClassName="pr-6 gap-6"
                   data={trendingMovies}
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
-                  ItemSeparatorComponent={() => <View className="w-4" />}
+                  ItemSeparatorComponent={() => <View className="w-0" />}
                   renderItem={({ item, index }) => {
                     return <TrendingCard movie={item} index={index} />;
                   }}
