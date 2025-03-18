@@ -6,6 +6,7 @@ import { fetchMovies } from "@/services/api";
 import useFetch from "@/services/useFetch";
 import { icons } from "@/constants/icons";
 import SearchBar from "@/components/SearchBar";
+import { updateSearchCount } from "@/services/appwrite";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,10 +19,21 @@ const Search = () => {
     reset,
   } = useFetch(() => fetchMovies({ query: searchQuery }), true);
 
+  // // Sort movies by popularity after fetching
+  // const sortedMovies = useMemo(() => {
+  //   if (!movies) return [];
+  //   return [...movies].sort((a, b) => b.popularity - a.popularity);
+  // }, [movies]);
+
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
+        // console.log("Loading movies...", movies);
+        if (movies?.length > 0 && movies?.[0]) {
+          console.log("MOVIE FOUND", movies[0]);
+          await updateSearchCount(searchQuery, movies[0]);
+        }
       } else {
         reset();
       }
@@ -31,12 +43,6 @@ const Search = () => {
     // func();
   }, [searchQuery]);
 
-  // Sort movies by popularity after fetching
-  const sortedMovies = useMemo(() => {
-    if (!movies) return [];
-    return [...movies].sort((a, b) => b.popularity - a.popularity);
-  }, [movies]);
-
   return (
     <View className="flex-1 bg-primary">
       <Image
@@ -45,7 +51,7 @@ const Search = () => {
         resizeMode="cover"
       />
       <FlatList
-        data={sortedMovies}
+        data={movies}
         renderItem={({ item }) => <MovieCard {...item} />}
         keyExtractor={(item) => item.id.toString()}
         className="px-5"

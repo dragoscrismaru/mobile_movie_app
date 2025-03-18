@@ -19,10 +19,6 @@ export const fetchMovies = async ({
     endpoint = `${TMDB_CONFIG.BASE_URL}/search/movie?query=${encodeURIComponent(
       query
     )}`;
-    // Add sort_by if provided with query
-    if (sort_by) {
-      endpoint += `&sort_by=${encodeURIComponent(sort_by)}`;
-    }
   } else {
     // Use discover endpoint with sort_by or default
     endpoint = `${TMDB_CONFIG.BASE_URL}/discover/movie?sort_by=${
@@ -41,6 +37,9 @@ export const fetchMovies = async ({
   }
 
   const data = await response.json();
-
-  return data.results;
+  const sortedResults = data.results.sort(
+    (a: Movie, b: Movie) => b.popularity - a.popularity
+  );
+  return sortedResults;
+  // return data.results;
 };
