@@ -17,7 +17,7 @@ const Search = () => {
     error: moviesError,
     refetch: loadMovies,
     reset,
-  } = useFetch(() => fetchMovies({ query: searchQuery }), true);
+  } = useFetch(() => fetchMovies({ query: searchQuery }), false);
 
   // // Sort movies by popularity after fetching
   // const sortedMovies = useMemo(() => {
@@ -25,15 +25,14 @@ const Search = () => {
   //   return [...movies].sort((a, b) => b.popularity - a.popularity);
   // }, [movies]);
 
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+  };
+
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
-        // console.log("Loading movies...", movies);
-        if (movies?.length > 0 && movies?.[0]) {
-          console.log("MOVIE FOUND", movies[0]);
-          await updateSearchCount(searchQuery, movies[0]);
-        }
       } else {
         reset();
       }
@@ -42,6 +41,14 @@ const Search = () => {
     return () => clearTimeout(timeoutId);
     // func();
   }, [searchQuery]);
+
+  useEffect(() => {
+    // console.log("Loading movies...", movies);
+    if (movies?.length! > 0 && movies?.[0]) {
+      // console.log("MOVIE FOUND", movies[0]);
+      updateSearchCount(searchQuery, movies[0]);
+    }
+  }, [movies]);
 
   return (
     <View className="flex-1 bg-primary">
@@ -74,7 +81,7 @@ const Search = () => {
               <SearchBar
                 placeholder="Search movies..."
                 value={searchQuery}
-                onChangeText={(text: string) => setSearchQuery(text)}
+                onChangeText={handleSearch}
               />
             </View>
 
