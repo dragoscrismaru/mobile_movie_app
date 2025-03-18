@@ -15,6 +15,7 @@ import useFetch from "@/services/useFetch";
 import { fetchMovies } from "@/services/api";
 import MovieCard from "@/components/MovieCard";
 import { getMostSearchedMovies } from "@/services/appwrite";
+import TrendingCard from "@/components/TrendingCard";
 export default function Index() {
   const router = useRouter();
 
@@ -68,10 +69,10 @@ export default function Index() {
                   className="mb-4 mt-3"
                   data={trendingMovies}
                   horizontal={true}
-                  renderItem={({ item }) => {
-                    return (
-                      <Text className="text-white text-sm">{item.title}</Text>
-                    );
+                  showsHorizontalScrollIndicator={false}
+                  ItemSeparatorComponent={() => <View className="w-4" />}
+                  renderItem={({ item, index }) => {
+                    return <TrendingCard movie={item} index={index} />;
                   }}
                   keyExtractor={(item) => item.movie_id.toString()}
                 ></FlatList>
