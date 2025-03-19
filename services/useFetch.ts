@@ -1,9 +1,4 @@
-//fetchMovies
-//fetchMovieDetails
-
 import { useEffect, useState } from "react";
-
-//useFetch(fetchMovies) example
 
 const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
   const [data, setData] = useState<T | null>(null);
