@@ -43,9 +43,7 @@ const Search = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    // console.log("Loading movies...", movies);
     if (movies?.length! > 0 && movies?.[0]) {
-      // console.log("MOVIE FOUND", movies[0]);
       updateSearchCount(searchQuery, movies[0]);
     }
   }, [movies]);
