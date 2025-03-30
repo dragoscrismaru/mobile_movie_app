@@ -13,30 +13,40 @@ export const getFavorites = async () => {
   }
 };
 
-export const addFavorite = async (movie: string) => {
+export const addFavorite = async (movie: MovieDetails) => {
   try {
+    const minimalMovie = {
+      id: movie.id,
+      title: movie.title,
+      poster_path: movie.poster_path,
+      vote_average: movie.vote_average,
+      popularity: movie.popularity,
+      release_date: movie.release_date,
+    };
     const favorites = await getFavorites();
-    favorites.push(movie);
+    favorites.push(minimalMovie);
     await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
   } catch (e) {
     console.error("Error adding favorite", e);
   }
 };
 
-export const removeFavorite = async (movieId: string) => {
+export const removeFavorite = async (movieId: number) => {
   try {
     const favorites = await getFavorites();
-    const newFavorites = favorites.filter((item) => item.id !== movieId);
+    const newFavorites = favorites.filter(
+      (item: MovieDetails) => item.id !== movieId
+    );
     await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
   } catch (e) {
     console.error("Error removing favorite", e);
   }
 };
 
-export const isFavorite = async (movieId) => {
+export const isFavorite = async (movieId: number) => {
   try {
     const favorites = await getFavorites();
-    return favorites.some((item) => item.id === movieId);
+    return favorites.some((item: MovieDetails) => item.id === movieId);
   } catch (e) {
     console.error("Error checking favorite", e);
     return false;

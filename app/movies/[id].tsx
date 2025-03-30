@@ -1,14 +1,21 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import useFetch from "@/services/useFetch";
 import { fetchMovieDetails } from "@/services/api";
 import { icons } from "@/constants/icons";
+import {
+  addFavorite,
+  isFavorite,
+  removeFavorite,
+} from "@/services/favoritesStorage";
 
 interface MovieInfoProps {
   label: string;
   value?: string | number | null;
 }
+
+import { Heart } from "lucide-react-native";
 
 const MovieInfo = ({ label, value }: MovieInfoProps) => (
   <View className="flex-col items-start justify-center mt-5">
@@ -30,6 +37,28 @@ const MovieDetails = () => {
 
   const [favorite, setFavorite] = useState(false);
 
+  // Check favorite status when movie is loaded
+  useEffect(() => {
+    const checkFavorite = async () => {
+      if (movie) {
+        const fav = await isFavorite(movie.id);
+        setFavorite(fav);
+      }
+    };
+    checkFavorite();
+  }, [movie]);
+
+  const toggleFavorite = async () => {
+    if (movie) {
+      if (favorite) {
+        await removeFavorite(movie.id);
+      } else {
+        await addFavorite(movie);
+      }
+      setFavorite(!favorite);
+    }
+  };
+
   return (
     <View className="bg-primary flex-1">
       {/* <Text className="text-white">Movie Details</Text> */}
@@ -44,7 +73,14 @@ const MovieDetails = () => {
           ></Image>
         </View>
         <View className="flex-col items-start justify-center mt-5 px-5">
-          <Text className="text-white font-bold text-xl">{movie?.title}</Text>
+          {/* Header with Movie Title and Heart Icon */}
+          <View className="flex-row items-center justify-between w-full">
+            <Text className="text-white font-bold text-xl">{movie?.title}</Text>
+            <TouchableOpacity onPress={toggleFavorite}>
+              <Heart fill={favorite ? "red" : ""} color={"red"} />
+              {/* {favorite ? <Heart fill={"red"} color={"red"} /> : <Heart />} */}
+            </TouchableOpacity>
+          </View>
           <View className="flex-row items-center gap-1 mt-2 ">
             <Text className="text-light-200 text-sm">
               {movie?.release_date?.split("-")[0]}
@@ -54,8 +90,9 @@ const MovieDetails = () => {
           <View className="flex-row items-center bg-dark-100 px-2 py-1 rounded-md gap-x-1 mt-2">
             <Image source={icons.star} className="size-4"></Image>
             <Text className="text-white font-bold text-sm">
-              {Math.round(movie?.vote_average ?? 0)} / 10
+              {Math.round(movie?.vote_average ?? 0)}/10
             </Text>
+
             <Text className="text-light-200 text-sm">
               ({movie?.vote_count} votes)
             </Text>
