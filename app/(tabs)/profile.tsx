@@ -1,13 +1,18 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { icons } from "@/constants/icons";
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import { Link, Redirect, router } from "expo-router";
 import { SignOutButton } from "@/components/SignOutButton";
 
 const Profile = () => {
   const { user } = useUser();
+  const { signOut } = useAuth();
 
+  const handleSignOut = () => {
+    signOut();
+    router.replace("/(auth)/sign-in");
+  };
   return (
     <View className="bg-primary flex-1 px-10">
       {/* <View className="felx justify-center items-center flex-1 flex-col gap-5">
@@ -24,8 +29,22 @@ const Profile = () => {
       </View> */}
       <View className="flex justify-center items-center flex-1 flex-col gap-5">
         <SignedIn>
-          <Text>Hello {user?.emailAddresses[0].emailAddress}</Text>
-          <SignOutButton />
+          <Text className="text-white">
+            Hello {user?.emailAddresses[0].emailAddress}
+          </Text>
+          <TouchableOpacity
+            onPress={handleSignOut}
+            className="w-full mx-5 bg-accent rounded-lg py-3.5 flex flex-row items-center justify-center z-50"
+          >
+            <Image
+              source={icons.person}
+              className="size-5 mr-1 mt-0.5"
+              tintColor={"#FFF"}
+            ></Image>
+            <Text className="text-white font-semibold text-base">
+              Deconecteaza-te!
+            </Text>
+          </TouchableOpacity>
         </SignedIn>
         <SignedOut>
           {/* <Link href="/(auth)/sign-in">

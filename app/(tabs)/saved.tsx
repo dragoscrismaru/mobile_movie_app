@@ -52,39 +52,42 @@ const Saved = () => {
 
   return (
     <>
-      {favorites.length === 0 ? (
-        <View className="flex-1 justify-center items-center">
-          <Image source={icons.save} className="w-10 h-10" tintColor={"#FFF"} />
-          <Text className="text-gray-500 text-base mt-3">
-            No favorites saved
-          </Text>
-        </View>
-      ) : (
-        <View className="flex-1 bg-primary">
-          <Image source={images.bg} className="absolute w-full z-0" />
-          <FlatList
-            data={favorites}
-            keyExtractor={(item: Movie) => item.id.toString()}
-            renderItem={({ item }) => <MovieCard {...item} />}
-            numColumns={3}
-            columnWrapperStyle={{
-              justifyContent: "flex-start",
-              gap: 20,
-              paddingRight: 8,
-              paddingLeft: 8,
-              marginBottom: 10,
-            }}
-            ListHeaderComponent={ListHeader}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-            contentContainerStyle={{ paddingBottom: 10, paddingHorizontal: 5 }}
-          />
-        </View>
-      )}
+      <View className="flex-1 bg-primary">
+        <Image source={images.bg} className="absolute w-full z-0" />
+        <FlatList
+          data={favorites}
+          keyExtractor={(item: Movie) => item.id.toString()}
+          renderItem={({ item }) => <MovieCard {...item} />}
+          numColumns={3}
+          columnWrapperStyle={{
+            justifyContent: "flex-start",
+            gap: 20,
+            paddingRight: 8,
+            paddingLeft: 8,
+            marginBottom: 10,
+          }}
+          ListHeaderComponent={
+            favorites.length === 0 ? (
+              <View className="flex-1 justify-center items-center mt-40">
+                <Image
+                  source={icons.save}
+                  className="w-10 h-10"
+                  tintColor={"#FFF"}
+                />
+                <Text className="text-gray-500 text-base mt-3">
+                  No favorites saved
+                </Text>
+              </View>
+            ) : (
+              ListHeader
+            )
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+          contentContainerStyle={{ paddingBottom: 10, paddingHorizontal: 5 }}
+        />
+      </View>
     </>
   );
 };
